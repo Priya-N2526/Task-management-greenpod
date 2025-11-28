@@ -1,18 +1,20 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const db = require('./db'); // ensure tables created
-const authRoutes = require('./routes/auth');
-const taskRoutes = require('./routes/tasks');
-const userRoutes = require('./routes/users');
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import { MONGO_URL } from "./config.js";
+
+import authRoutes from "./routes/authRoutes.js";
+import taskRoutes from "./routes/taskRoutes.js";
 
 const app = express();
+app.use(express.json());
 app.use(cors());
-app.use(bodyParser.json());
 
-app.use('/api/auth', authRoutes);
-app.use('/api/tasks', taskRoutes);
-app.use('/api/users', userRoutes);
+// Routes
+app.use("/auth", authRoutes);
+app.use("/tasks", taskRoutes);
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+mongoose.connect(MONGO_URL).then(() => {
+  console.log("Mongo Connected");
+  app.listen(5000, () => console.log("Server running on port 5000"));
+});

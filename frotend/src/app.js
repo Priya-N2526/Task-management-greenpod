@@ -1,45 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import Login from './pages/login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-import { setAuthToken } from './services/api';
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
 
-function App() {
-  const [token, setToken] = useState(localStorage.getItem('token'));
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
-
-  useEffect(() => {
-    setAuthToken(token);
-  }, [token]);
-
-  function handleLogin(token, user) {
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(user));
-    setToken(token);
-    setUser(user);
-  }
-
-  function handleLogout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setToken(null);
-    setUser(null);
-    setAuthToken(null);
-  }
-
-  if (!token) {
-    return (
-      <div style={{ padding: 20 }}>
-        <h2>Task App</h2>
-        <div style={{ display: 'flex', gap: 20 }}>
-          <Login onLogin={handleLogin} />
-          <Register onRegister={handleLogin} />
-        </div>
-      </div>
-    );
-  }
-
-  return <Dashboard user={user} onLogout={handleLogout} />;
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
-
-export default App;
