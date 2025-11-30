@@ -1,11 +1,15 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
-const taskSchema = new mongoose.Schema({
+const TaskSchema = new mongoose.Schema({
   title: String,
   description: String,
   dueDate: String,
-  status: { type: String, default: "Pending" },
-  userId: String
+  status: {
+    type: String,
+    enum: ["Pending", "In Progress", "Completed"],
+    default: "Pending",
+  },
+  userId: String,
 });
 
-export default mongoose.model("Task", taskSchema);
+module.exports = mongoose.model("Task", TaskSchema);

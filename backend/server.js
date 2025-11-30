@@ -1,20 +1,17 @@
-import express from "express";
-import mongoose from "mongoose";
-import cors from "cors";
-import { MONGO_URL } from "./config.js";
+const express = require("express");
+const cors = require("cors");
+const connectDB = require("./config/db");
 
-import authRoutes from "./routes/authRoutes.js";
-import taskRoutes from "./routes/taskRoutes.js";
+const authRoutes = require("./routes/authRoutes");
+const taskRoutes = require("./routes/taskRoutes");
 
 const app = express();
-app.use(express.json());
+connectDB();
+
 app.use(cors());
+app.use(express.json());
 
-// Routes
-app.use("/auth", authRoutes);
-app.use("/tasks", taskRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/tasks", taskRoutes);
 
-mongoose.connect(MONGO_URL).then(() => {
-  console.log("Mongo Connected");
-  app.listen(5000, () => console.log("Server running on port 5000"));
-});
+app.listen(5000, () => console.log("Backend running on http://localhost:5000"));

@@ -1,13 +1,22 @@
-import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "../config.js";
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 
-export const auth = (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
+  const token = req.header("Authorization")?.replace("Bearer ", "");
+
+  if (!token) return res.status(401).json({ message: "No token provided" });
+
   try {
-    const token = req.headers.authorization.split(" ")[1];
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded;
+    const decoded = jwt.verify(token, "secret123");
+    const user = await User.findById(decoded.id).select("-password");
+
+    if (!user) return res.status(401).json({ message: "Invalid token" });
+
+    req.user = user;
     next();
   } catch (err) {
-    res.status(401).json({ message: "Not Authorized" });
+    res.status(401).json({ message: "Token verification failed" });
   }
 };
+
+module.exports = authMiddleware;
